@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\GClaims.BuildingBlocks.Core\GClaims.BuildingBlocks.Core.csproj"/>
+        <ProjectReference Include="..\GClaims.Core\GClaims.Core.csproj"/>
+        <ProjectReference Include="..\GClaims.Marvel.Core\GClaims.Marvel.Core.csproj"/>
+        <ProjectReference Include="..\GClaims.Marvel.Infrastructure\GClaims.Marvel.Infrastructure.csproj"/>
+    </ItemGroup>
+
+</Project>
