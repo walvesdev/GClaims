@@ -8,29 +8,26 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Remove="CommonSettings.Development.json" />
-      <None Remove="CommonSettings.json" />
-      <None Remove="CommonSettings.Production.json" />
-      <None Remove="CommonSettings.Staging.json" />
       <None Remove="Properties\launchSettings.json" />
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="appsettings.json">
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </Content>
-      <Content Include="CommonSettings.Development.json">
+      <Content Include="..\appsettings.Development.json" Link="appsettings.Development.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Include="CommonSettings.json">
+      <Content Include="..\appsettings.json" Link="appsettings.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Include="CommonSettings.Production.json">
+      <Content Include="..\CommonSettings.Development.json" Link="CommonSettings.Development.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Include="CommonSettings.Staging.json">
+      <Content Include="..\CommonSettings.json" Link="CommonSettings.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\CommonSettings.Production.json" Link="CommonSettings.Production.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\CommonSettings.Staging.json" Link="CommonSettings.Staging.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="Properties\launchSettings.json">

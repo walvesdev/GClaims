@@ -8,10 +8,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="..\GlobalUsings.cs" Link="GlobalUsings.cs"/>
+        <Compile Include="..\GlobalUsings.cs" Link="GlobalUsings.cs" />
     </ItemGroup>
 
     <ItemGroup>
+        <Content Include="..\appsettings.Development.json" Link="appsettings.Development.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="..\appsettings.json" Link="appsettings.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
         <Content Include="..\CommonSettings.Development.json" Link="CommonSettings.Development.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
@@ -27,13 +33,20 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="MediatR" Version="10.0.1"/>
-        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1"/>
+        <PackageReference Include="MediatR" Version="10.0.1" />
+        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\GClaims.Utilities.Core\GClaims.Utilities.Core.csproj"/>
-        <ProjectReference Include="..\GClaims.Utilities.Infrastructure\GClaims.Utilities.Infrastructure.csproj"/>
+        <ProjectReference Include="..\GClaims.Core\GClaims.Core.csproj" />
+        <ProjectReference Include="..\GClaims.Utilities.Core\GClaims.Utilities.Core.csproj" />
+        <ProjectReference Include="..\GClaims.Utilities.Infrastructure\GClaims.Utilities.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.AspNetCore">
+        <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\6.0.7\Microsoft.AspNetCore.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

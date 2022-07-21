@@ -7,7 +7,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\GClaims.Marvel.Core\GClaims.Marvel.Core.csproj"/>
+        <ProjectReference Include="..\GClaims.Marvel.Core\GClaims.Marvel.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Dapper" Version="2.0.123" />
+      <PackageReference Include="FluentMigrator" Version="3.3.2" />
+      <PackageReference Include="FluentMigrator.Abstractions" Version="3.3.2" />
+      <PackageReference Include="FluentMigrator.Extensions.SqlServer" Version="3.3.2" />
+      <PackageReference Include="FluentMigrator.Runner" Version="3.3.2" />
+      <PackageReference Include="FluentMigrator.Runner.Core" Version="3.3.2" />
     </ItemGroup>
 
 </Project>

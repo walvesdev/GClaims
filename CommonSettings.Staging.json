@@ -1,7 +1,7 @@
 {
   "ConnectionStrings": {
-    "Hangfire": "Server=localhost;Database=hangfire_db;Trusted_Connection=True;Connect Timeout=300;",
-    "Default": "Server=localhost;Database=appdb;Trusted_Connection=True;Connect Timeout=300;",
+    "Hangfire": "Server=localhost;Database=Hangfire_Marvel;Trusted_Connection=True;Connect Timeout=300;",
+    "Default": "Server=localhost;Database=Marvel;Trusted_Connection=True;Connect Timeout=300;",
     "EventStoreConnection": "ConnectTo=tcp://admin:changeit@localhost:1113; HeartBeatTimeout=500000;UseSslConnection=False;"
   },
   "AppSettings": {

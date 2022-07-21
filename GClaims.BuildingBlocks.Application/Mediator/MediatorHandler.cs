@@ -76,7 +76,7 @@ public class MediatorHandler : IMediatorHandler
         where TRequest : IBaseRequest
         where TValidator : AbstractValidator<TRequest>, new()
     {
-        ValidationResult validationResult = null!;
+        ValidationResult validationResult = new ValidationResult();
         var validator = new TValidator();
 
         if (command != null)

@@ -24,7 +24,7 @@ public static class SequentialGuidGenerator
 {
     private static readonly RandomNumberGenerator _rng = RandomNumberGenerator.Create();
 
-    public static Guid NewSequentialGuid(SequentialGuidType guidType)
+    public static Guid NewSequentialGuid(SequentialGuidType guidType = SequentialGuidType.SequentialAtEnd)
     {
         var randomBytes = new byte[10];
         _rng.GetBytes(randomBytes);
