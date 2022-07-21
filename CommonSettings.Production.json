@@ -1,0 +1,66 @@
+{
+  "ConnectionStrings": {
+    "Hangfire": "Server=localhost;Database=hangfire_db;Trusted_Connection=True;Connect Timeout=300;",
+    "Default": "Server=localhost;Database=appdb;Trusted_Connection=True;Connect Timeout=300;",
+    "EventStoreConnection": "ConnectTo=tcp://admin:changeit@localhost:1113; HeartBeatTimeout=500000;UseSslConnection=False;"
+  },
+  "AppSettings": {
+    "Security": {
+      "CorsOrigins": [
+        "http://localhost:5000",
+        "http://localhost:4200",
+        "http://localhost:4300",
+        "http://localhost:4400",
+        "http://localhost:4500",
+        "http://localhost:4600"
+      ],
+      "CertificateName": "App-Prd.pfx",
+      "CertificatePassword": "",
+      "AppClientSecret": ""
+    },
+    "Mail": {
+      "Email": "",
+      "Password": "",
+      "SMTPServer": "",
+      "SMTPPort": 465,
+      "EnableSsl": true,
+      "TimeoutInMinutes": "7"
+    },
+    "SFTP": {
+      "Host": "",
+      "Port": 2222,
+      "Username": "",
+      "Password": "",
+      "Provider": ""
+    },
+    "Redis": {
+      "Host": "",
+      "Port": 6379,
+      "Ssl": false,
+      "Password": ""
+    },
+    "SendGrid": {
+      "ApiKey": "",
+      "ApiKeyId": ""
+    },
+    "Hangfire": {
+      "Redis": {
+        "Db": 1,
+        "Prefix": "hangfire_app"
+      }
+    },
+    "TokenConfigurations": {
+      "Audience": "WAS",
+      "Issuer": "WAS",
+      "Lifetime": 120,
+      "SecurityKey":"Ym7AD3OT2kpuIRcVAXCweYhV64B0Oi9ETAO6XRbqB8LDL3tF4bMk9x/59PljcGbP5v38BSzCjD1VTwuO6iWA8uzDVAjw2fMNfcT2/LyRlMOsynblo3envlivtgHnKkZj6HqRrG5ltgwy5NsCQ7WwwYPkldhLTF+wUYAnq28+QnU="
+    },
+    "RabbitMQ": {
+      "Host": "",
+      "Port": 5672,
+      "VirtualHost": "",
+      "Username": "",
+      "Password": "d"
+    }
+  }
+}
