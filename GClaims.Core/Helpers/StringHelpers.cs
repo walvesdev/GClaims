@@ -186,4 +186,33 @@ public static class StringHelpers
 
         return word.Substring(0, size - 1);
     }
+    
+    //convert string para base64
+    public static string EncodeToBase64(this string texto)
+    {
+        try
+        {
+            var textoAsBytes = Encoding.ASCII.GetBytes(texto);
+            var resultado = Convert.ToBase64String(textoAsBytes);
+            return resultado;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+    //converte de base64 para texto
+    public static string DecodeFrom64(this string dados)
+    {
+        try
+        {
+            var dadosAsBytes = Convert.FromBase64String(dados);
+            var resultado = Encoding.ASCII.GetString(dadosAsBytes);
+            return resultado;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
 }

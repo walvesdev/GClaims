@@ -1,4 +1,6 @@
-﻿namespace GClaims.Core.Auth
+﻿using Microsoft.AspNetCore.Authentication;
+
+namespace GClaims.Core.Auth
 {
     public class AccessToken
     {
@@ -8,5 +10,7 @@
         public string Message { get; set; }
         public string Token { get; set; }
         public Guid UserId { get; set; }
+
+        public AuthenticationTicket? AuthenticationTicket { get; set; }
     }
 }

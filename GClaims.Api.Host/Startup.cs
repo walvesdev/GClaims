@@ -7,10 +7,11 @@ using GClaims.Core.Auth;
 using GClaims.Core.Extensions;
 using GClaims.Core.FIlters;
 using GClaims.Core.Filters.CustomExceptions;
+using GClaims.Core.Handlers;
 using GClaims.Core.Middlewares;
 using GClaims.Marvel.Application.Accounts.Dtos;
 using GClaims.Marvel.Core.Models;
-using MediatR;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
@@ -84,6 +85,7 @@ public class Startup
 
         services.AddSwaggerGen(swagger =>
         {
+            swagger.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
             swagger.SwaggerDoc("v1", new OpenApiInfo
             {
                 Title = "GClaims API",
@@ -105,6 +107,7 @@ public class Startup
             {
                 swagger.IncludeXmlComments(file, true);
             });
+            
             swagger.AddSecurityDefinition("basic", new OpenApiSecurityScheme
             {
                 Name = "Authorization",
@@ -113,6 +116,7 @@ public class Startup
                 In = ParameterLocation.Header,
                 Description = "Basic Authorization header using the Bearer scheme."
             });
+            
             swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
                 {
@@ -124,10 +128,11 @@ public class Startup
                             Id = "basic"
                         }
                     },
-                    Array.Empty<string>()
+                    new string[] {}
                 }
             });
         });
+
 
         JsonConvert.DefaultSettings = () =>
         {
@@ -192,7 +197,7 @@ public class Startup
             return next();
         });
 
-        app.UseCors(CORS_NAME);
+       
         app.UseForwardedHeaders();
 
         app.Use((context, next) =>
@@ -223,20 +228,22 @@ public class Startup
                 await context.Response.WriteAsync(response, Encoding.UTF8);
             }, true);
         });
-        app.UseHttpsRedirection();
-        app.UseRouting();
         
-        app.UseAuthentication();
-        app.UseAuthorization();
-   
-        app.UseStaticFiles();
-
         app.UseSwagger();
         app.UseSwaggerUI(ui =>
         {
             ui.SwaggerEndpoint("v1/swagger.json", "GClaims API v1");
             ui.DocExpansion(DocExpansion.None);
         });
+        
+        app.UseRouting();
+        app.UseStaticFiles();
+        
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.UseCors(CORS_NAME);
+        app.UseHttpsRedirection();
         
         app.UseEndpoints(endpoints =>
         {

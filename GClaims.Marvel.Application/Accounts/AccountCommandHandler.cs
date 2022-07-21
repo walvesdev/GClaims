@@ -54,7 +54,11 @@ public class AccountCommandHandler :
             //return response;
         }
 
-        return null!;
+        return new CreateAccountResponse
+        {
+            Id = Guid.Parse("c187cf46-4236-4233-85fe-2909a0484ac7"),
+            Name = "Teste OK"
+        };
     }
 
     public async Task<bool> Handle(DeleteAccountCommand command, CancellationToken cancellationToken)

@@ -5,6 +5,7 @@ using GClaims.BuildingBlocks.Core;
 using GClaims.BuildingBlocks.Core.Mediator;
 using GClaims.BuildingBlocks.Core.Messages.CommonMessages.Notifications;
 using GClaims.Core;
+using GClaims.Core.Auth;
 using GClaims.Marvel.Application.Accounts.Comands;
 using GClaims.Marvel.Application.Accounts.Queries;
 using GClaims.Marvel.Application.Accounts.Requests;
@@ -18,8 +19,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GClaims.Host.Controllers.Modules.Marvel;
 
+// [Authorize(Roles = AuthRoles.ALL)]
+[Authorize(Policy = "MASTER")]
 [Route("api/services/[controller]/[action]")]
-[Authorize]
 public class AccountController : AppControllerBase
 {
     public AccountController(INotificationHandler<DomainNotification> notifications,
