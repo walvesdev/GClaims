@@ -98,14 +98,21 @@ public static class JwtConfigWebApi
                     {
                         return Task.CompletedTask;
                     }
-                    
-                    // var encryptedToken = DecryptAES.DecryptStringAES(token);
-                    // context.Token = encryptedToken;
-                    
-                    var handler = new JwtSecurityTokenHandler();
-                    var validatedToken = (SecurityToken)new JwtSecurityToken();
-                    var claimsPrincipal = handler.ValidateToken(handler.ReadJwtToken(token)?.RawData, paramsValidation, out validatedToken);
 
+                    try
+                    {
+                        // var encryptedToken = DecryptAES.DecryptStringAES(token);
+                        // context.Token = encryptedToken;
+                        var handler = new JwtSecurityTokenHandler();
+                        var validatedToken = (SecurityToken)new JwtSecurityToken();
+                        var claimsPrincipal = handler.ValidateToken(handler.ReadJwtToken(token)?.RawData, paramsValidation, out validatedToken);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                    
+                  
                     context.Token = token;
                     return Task.CompletedTask;
                 }
