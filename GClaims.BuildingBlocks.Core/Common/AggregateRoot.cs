@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using GClaims.BuildingBlocks.Core.Messages;
+using GClaims.Core;
 using GClaims.Core.Extensions;
 
-namespace GClaims.Core;
+namespace GClaims.BuildingBlocks.Core.Common;
 
 public interface IAggregateRoot
 {

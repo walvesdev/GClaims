@@ -25,7 +25,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
                 .AddSqlServer()
                 // Set the connection string
                 .WithGlobalConnectionString(
-                    "Server=localhost;Database=Marvel;Trusted_Connection=True;Connect Timeout=300;")
+                    "Data Source=tcp:localhost,1433;Initial Catalog=Marvel;User Id=sa;Password=1q2w3E*;MultipleActiveResultSets=True;Connect Timeout=300;")
                 // Define the assembly containing the migrations
                 .ScanIn(typeof(Program).Assembly).For.Migrations())
             // Enable logging to console in the FluentMigrator way

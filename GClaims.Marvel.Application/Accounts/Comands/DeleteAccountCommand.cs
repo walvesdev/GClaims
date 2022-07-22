@@ -12,4 +12,6 @@ public class DeleteAccountCommand : Command<DeleteAccountCommand, bool, DeleteAc
     }
 
     public int Id { get; set; }
+
+    public MarvelAccountDto Input { get; }
 }

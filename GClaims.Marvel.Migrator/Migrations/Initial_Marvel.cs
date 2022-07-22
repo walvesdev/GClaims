@@ -8,10 +8,15 @@ public class Initial_Marvel: AppMigration
 {
     public override void Up()
     {
-        CreateTable("Account", IdentityType.Guid)
+        // CreateTable("Account", IdentityType.Guid)
+        //     .WithColumn("Name").AsString()
+        //     .WithColumn("Password").AsString()
+        //     .WithColumn("RoleId").AsInt32();
+
+        Create.Table("Account")
+            .WithColumn("Id").AsInt32().PrimaryKey().Identity()
             .WithColumn("Name").AsString()
-            .WithColumn("Password").AsString()
-            .WithColumn("RoleId").AsInt32();
+            .WithColumn("Password").AsString();
     }
     
     public override void Down()

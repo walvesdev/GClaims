@@ -11,6 +11,7 @@ using GClaims.Marvel.Application.Accounts;
 using GClaims.Marvel.Application.Accounts.Comands;
 using GClaims.Marvel.Application.Accounts.Queries;
 using GClaims.Marvel.Application.Accounts.Responses;
+using GClaims.Marvel.Application.Extensions;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +29,7 @@ public static class DependecyInjectionExtension
         services.AddScoped<AppUser>();
         services.AddScoped<HttpClient>();
         services.AddScoped(typeof(HttpClientService<,,,>));
+        
 
         // ====================================
         // Contexts Cofig
@@ -59,20 +61,10 @@ public static class DependecyInjectionExtension
         services.AddSingleton<IEventSourcingRepository, EventSourcingRepository>();
 
         // ====================================
-        // Commands
+        // Modules
         // ====================================
 
-        // Account
-        services.AddScoped<ICommandHandler<CreateAccountCommand, CreateAccountResponse>, AccountCommandHandler>();
-        services.AddScoped<ICommandHandler<UpdateAccountCommand, bool>, AccountCommandHandler>();
-        services.AddScoped<ICommandHandler<DeleteAccountCommand, bool>, AccountCommandHandler>();
-
-        // ====================================
-        // Queries
-        // ====================================
-
-        // Account
-        services.AddScoped<IQueryHandler<GetAllAccountQuery, GetAllAccountResponse>, AccountQueryHandler>();
+        services.AddMarvelDependency(configuration);
 
         return services;
     }

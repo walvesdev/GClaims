@@ -9,21 +9,24 @@ using GClaims.Marvel.Application.Accounts.Dtos;
 using GClaims.Marvel.Application.Accounts.Responses;
 using GClaims.Marvel.Application.Validators.AccountValidators;
 using GClaims.Marvel.Core.Models;
+using GClaims.Marvel.Infrastructure.Dapper;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace GClaims.Marvel.Application.Accounts;
 
 public class AccountCommandHandler :
-    ICommandHandler<CreateAccountCommand, CreateAccountResponse>,
+    ICommandHandler<CreateAccountCommand, long>,
     ICommandHandler<DeleteAccountCommand, bool>,
     ICommandHandler<UpdateAccountCommand, bool>
 {
     public AccountCommandHandler(
         IMediatorHandler mediatorHandler,
-        IOptions<AppSettingsSection> options)
+        IOptions<AppSettingsSection> options,
+        MarverAccountRepository repository)
     {
         MediatorHandler = mediatorHandler;
+        Repository = repository;
         AppSettings = options.Value;
 
     }
@@ -32,9 +35,11 @@ public class AccountCommandHandler :
 
     public IMediatorHandler? MediatorHandler { get; set; }
 
+    public MarverAccountRepository Repository { get; }
+
     public IOptions<AppSettingsSection> Options { get; }
 
-    public async Task<CreateAccountResponse> Handle(CreateAccountCommand command,
+    public async Task<long> Handle(CreateAccountCommand command,
         CancellationToken cancellationToken)
     {
         var isValid = await MediatorHandler!.Validate<CreateAccountCommand, CreateAccountValidator>(command);
@@ -45,20 +50,15 @@ public class AccountCommandHandler :
             
             await MediatorHandler.PublishEvent(new MarvelAccountIntegrationEvent
             {
-                AggregateId = command.Request.Input!.Id,
+                AggregateId = command.Request.Input!.Name,
                 Data = JsonConvert.SerializeObject(account)
             });
             
-            // var result = await Repository.InsertAsync(Account);
-            // var response = new CreateAccountResponse().Assign(result);
-            //return response;
+            return  await Repository.Save(account!);
         }
 
-        return new CreateAccountResponse
-        {
-            Id = Guid.Parse("c187cf46-4236-4233-85fe-2909a0484ac7"),
-            Name = "Teste OK"
-        };
+        return 0;
+
     }
 
     public async Task<bool> Handle(DeleteAccountCommand command, CancellationToken cancellationToken)
@@ -67,7 +67,8 @@ public class AccountCommandHandler :
 
         if (isValid)
         {
-            //await Repository.DeleteAsync(command.Id);
+            var obj = await Repository.Find(command.Id);
+            await Repository.Delete(obj);
         }
 
         return isValid;
@@ -82,7 +83,7 @@ public class AccountCommandHandler :
             return isValid;
         }
 
-        //await Repository.UpdateAsync(command.Input.Map<MarvelAccountDto, FinancialAccount>());
+        await Repository.Update(command.Input!.Map<MarvelAccountDto, MarvelAccount>()!);
 
         return isValid;
     }

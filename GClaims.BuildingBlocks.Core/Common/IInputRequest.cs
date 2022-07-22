@@ -1,6 +1,7 @@
 #region
 
 using GClaims.BuildingBlocks.Core.Messages;
+using GClaims.Core.Extensions;
 
 #endregion
 
@@ -55,41 +56,48 @@ public class InputQueryResponse<TResponse> : IInputQueryResponse<TResponse>
 
 public static class InputQueryExtensions
 {
-    public static ICollection<TResult> ToPagedList<TResult>(this ICommandQuery query, ICollection<TResult> list)
+    public static ICollection<TResult> ToPagedList<TResult>(this ICommandQuery command, ICollection<TResult> list)
     {
-        query.TotalCount = list.Count;
-        var maxResultCount = query.MaxResultCount > list.Count ? list.Count : query.MaxResultCount;
-        var skipCount = query.SkipCount > 0 ? query.SkipCount : (query.CurrentPage - 1) * query.PageSize;
+        command.TotalCount = list.Count;
+        var maxResultCount = command.MaxResultCount > list.Count ? list.Count : command.MaxResultCount;
+        var skipCount = command.SkipCount > 0 ? command.SkipCount : (command.CurrentPage - 1) * command.PageSize;
 
+        var query = list.AsQueryable();
+        
         if (maxResultCount > 0)
         {
-            list = list.Skip(0).Take(maxResultCount).ToList();
+            query = list.Skip(0).Take(maxResultCount).AsQueryable();
         }
 
-        var pageSize = query.PageSize <= list.Count ? query.PageSize : list.Count;
+        var pageSize = command.PageSize <= list.Count ? command.PageSize : list.Count;
 
-        var result = query.CurrentPage <= 0
-            ? list.Skip(0).Take(pageSize).ToList()
-            : list.Skip(skipCount).Take(pageSize).ToList();
+         query = command.CurrentPage <= 0
+            ? list.Skip(0).Take(pageSize).AsQueryable()
+            : list.Skip(skipCount).Take(pageSize).AsQueryable();
         try
         {
-            if (!string.IsNullOrWhiteSpace(query.Sorting))
+            if (!string.IsNullOrWhiteSpace(command.Sorting))
             {
-                if (query.Sorting.ToLower().Contains("asc"))
+                if (command.Sorting.ToLower().Contains("asc"))
                 {
-                    return result.OrderBy(_ => query.Sorting.Replace("asc", "").Trim()).ToList();
+                    query = query.OrderByProperty(command.Sorting.Replace("asc","").Trim());
+                    return query.ToList();
                 }
 
-                return query.Sorting.ToLower().Contains("desc")
-                    ? result.OrderByDescending(_ => query.Sorting.Replace("desc", "").Trim()).ToList()
-                    : result.OrderBy(_ => query.Sorting).ToList();
+                if (command.Sorting.ToLower().Contains("desc"))
+                {
+                    query = query.OrderByPropertyDesc(command.Sorting.Replace("desc","").Trim());
+                    return query.ToList();
+                }
+                query = query.OrderByProperty(command.Sorting);
+                return query.ToList();
             }
         }
-        catch
+        catch (Exception e)
         {
-            return result;
+            return query.ToList();
         }
 
-        return result;
+        return query.ToList();
     }
 }

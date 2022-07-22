@@ -12,11 +12,18 @@
 
     <ItemGroup>
       <PackageReference Include="Dapper" Version="2.0.123" />
+      <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
       <PackageReference Include="FluentMigrator" Version="3.3.2" />
       <PackageReference Include="FluentMigrator.Abstractions" Version="3.3.2" />
       <PackageReference Include="FluentMigrator.Extensions.SqlServer" Version="3.3.2" />
       <PackageReference Include="FluentMigrator.Runner" Version="3.3.2" />
       <PackageReference Include="FluentMigrator.Runner.Core" Version="3.3.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="GClaims.Marvel.Application">
+        <HintPath>..\GClaims.HangFire.Host\bin\Debug\net6.0\GClaims.Marvel.Application.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

@@ -6,7 +6,7 @@ using GClaims.Marvel.Application.Validators.AccountValidators;
 
 namespace GClaims.Marvel.Application.Accounts.Comands;
 
-public class CreateAccountCommand : Command<CreateAccountCommand, CreateAccountResponse, CreateAccountValidator,
+public class CreateAccountCommand : Command<CreateAccountCommand, long, CreateAccountValidator,
     MarvelAccountDto>
 {
     public CreateAccountCommand(CreateAccountRequest request)

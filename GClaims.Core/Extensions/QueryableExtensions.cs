@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Reflection;
 using GClaims.Core.Helpers;
 
 namespace GClaims.Core.Extensions;
@@ -101,5 +102,37 @@ public static class QueryableExtensions
         }
 
         return (TQueryable)query.Where(predicate);
+    }
+
+    public static IOrderedQueryable<T> OrderByProperty<T>(this IQueryable<T> query, string memberName)
+    {
+        ParameterExpression[] typeParams = new ParameterExpression[] { Expression.Parameter(typeof(T), "") };
+        
+        PropertyInfo pi = typeof(T).GetProperty(memberName.ToPascalCase());
+
+        return (IOrderedQueryable<T>)query.Provider.CreateQuery(
+            Expression.Call(
+                typeof(Queryable),
+                "OrderBy",
+                new Type[] { typeof(T), pi.PropertyType },
+                query.Expression,
+                Expression.Lambda(Expression.Property(typeParams[0], pi), typeParams))
+        );
+    }
+
+    public static IOrderedQueryable<T> OrderByPropertyDesc<T>(this IQueryable<T> query, string memberName)
+    {
+        ParameterExpression[] typeParams = new ParameterExpression[] { Expression.Parameter(typeof(T), "") };
+        
+        PropertyInfo pi = typeof(T).GetProperty(memberName.ToPascalCase());
+
+        return (IOrderedQueryable<T>)query.Provider.CreateQuery(
+            Expression.Call(
+                typeof(Queryable),
+                "OrderByDescending",
+                new Type[] { typeof(T), pi.PropertyType },
+                query.Expression,
+                Expression.Lambda(Expression.Property(typeParams[0], pi), typeParams))
+        );
     }
 }

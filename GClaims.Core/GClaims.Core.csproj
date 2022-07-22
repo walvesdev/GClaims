@@ -41,8 +41,4 @@
         <Folder Include="Utils" />
     </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\GClaims.BuildingBlocks.Core\GClaims.BuildingBlocks.Core.csproj" />
-    </ItemGroup>
-
 </Project>

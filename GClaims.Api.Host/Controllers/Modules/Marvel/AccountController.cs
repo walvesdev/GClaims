@@ -40,7 +40,7 @@ public class AccountController : AppControllerBase
     public async Task<IActionResult> Create([FromBody] [Required] CreateAccountRequest request)
     {
         var result =
-            await MediatorHandler.SendCommand<CreateAccountCommand, CreateAccountResponse>(
+            await MediatorHandler.SendCommand<CreateAccountCommand, long>(
                 new CreateAccountCommand(request));
 
         if (!OperationIsValid)
