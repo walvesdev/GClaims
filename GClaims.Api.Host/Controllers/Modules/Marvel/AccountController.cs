@@ -1,17 +1,14 @@
 #region
 
 using System.ComponentModel.DataAnnotations;
-using GClaims.BuildingBlocks.Core;
 using GClaims.BuildingBlocks.Core.Mediator;
 using GClaims.BuildingBlocks.Core.Messages.CommonMessages.Notifications;
 using GClaims.Core;
-using GClaims.Core.Auth;
 using GClaims.Marvel.Application.Accounts.Comands;
 using GClaims.Marvel.Application.Accounts.Queries;
 using GClaims.Marvel.Application.Accounts.Requests;
 using GClaims.Marvel.Application.Accounts.Responses;
 using GClaims.Marvel.Application.Validators.AccountValidators;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,14 +16,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GClaims.Host.Controllers.Modules.Marvel;
 
-// [Authorize(Roles = AuthRoles.ALL)]
 [Authorize(Policy = "MASTER")]
 [Route("api/services/[controller]/[action]")]
 public class AccountController : AppControllerBase
 {
+    private readonly IMediatorHandler _mediatorHandler;
+
     public AccountController(INotificationHandler<DomainNotification> notifications,
         IMediatorHandler mediatorHandler) : base(notifications, mediatorHandler)
     {
+        _mediatorHandler = mediatorHandler;
     }
 
     /// <summary>
@@ -40,7 +39,7 @@ public class AccountController : AppControllerBase
     public async Task<IActionResult> Create([FromBody] [Required] CreateAccountRequest request)
     {
         var result =
-            await MediatorHandler.SendCommand<CreateAccountCommand, long>(
+            await _mediatorHandler.SendCommand<CreateAccountCommand, long>(
                 new CreateAccountCommand(request));
 
         if (!OperationIsValid)
@@ -61,7 +60,7 @@ public class AccountController : AppControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update([FromBody] [Required] UpdateAccountRequest request)
     {
-        await MediatorHandler.SendCommand<UpdateAccountCommand, bool>(new UpdateAccountCommand(request));
+        await _mediatorHandler.SendCommand<UpdateAccountCommand, bool>(new UpdateAccountCommand(request));
 
         if (!OperationIsValid)
         {
@@ -81,7 +80,7 @@ public class AccountController : AppControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Delete([Required] [FromRoute] [Range(1, int.MaxValue)] int id)
     {
-        await MediatorHandler.SendCommand<DeleteAccountCommand, bool>(new DeleteAccountCommand(id));
+        await _mediatorHandler.SendCommand<DeleteAccountCommand, bool>(new DeleteAccountCommand(id));
 
         if (!OperationIsValid)
         {
@@ -102,7 +101,7 @@ public class AccountController : AppControllerBase
     public async Task<IActionResult> GetAll([FromBody] [Required] GetAllAccountRequest request)
     {
         var response =
-            await MediatorHandler.SendQuery<GetAllAccountQuery, GetAllAccountResponse, GetAllAccountValidator>(
+            await _mediatorHandler.SendQuery<GetAllAccountQuery, GetAllAccountResponse, GetAllAccountValidator>(
                 new GetAllAccountQuery(request));
 
         if (!OperationIsValid)

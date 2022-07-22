@@ -7,7 +7,7 @@ namespace GClaims.Core.Extensions;
 
 public static class ModelStateExtensions
 {
-    public static JsonResult ToErrorResponse(this ModelStateDictionary modelState,
+    public static object ToErrorResponse(this ModelStateDictionary modelState,
         List<DomainNotification>? notifications = null, int code = 0, string? details = null, string? message = null)
     {
         var hasNotifcations = notifications?.Count > 0;
@@ -48,15 +48,31 @@ public static class ModelStateExtensions
 
         foreach (var notification in notifications)
         {
-            foreach (var error in notification.ValidationResult!.Errors)
+            
+            validationErrors.Add(new
             {
-                validationErrors.Add(new
+                notification.Key,
+                notification.Value,
+                notification.Timestamp,
+                notification.DomainNotificationId,
+                notification.Version,
+                notification.AggregateId,
+                notification.MessageType,
+                notification.Data,
+            });
+            
+            if (notification?.ValidationResult != null && !notification.ValidationResult.Errors.IsNullOrEmpty())
+            {
+                foreach (var error in notification?.ValidationResult?.Errors)
                 {
-                    error.ErrorCode,
-                    error.ErrorMessage,
-                    error.PropertyName,
-                    notification.Key
-                });
+                    validationErrors.Add(new
+                    {
+                        error.ErrorCode,
+                        error.ErrorMessage,
+                        error.PropertyName,
+                        notification.Key
+                    });
+                }
             }
         }
 
@@ -65,11 +81,7 @@ public static class ModelStateExtensions
             Code = code,
             Details = details,
             Message = message ?? "Erro ao processar requisição!",
-            ValidationErrors = validationErrors.ToArray()
-        }, new JsonSerializerSettings
-        {
-            Formatting = Formatting.Indented,
-            NullValueHandling = NullValueHandling.Ignore
+            ValidationErrors = validationErrors.ToList()
         });
     }
 }

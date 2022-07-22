@@ -52,7 +52,6 @@ public class Startup
         // Add services to the container.
         services.AddHttpContextAccessor();
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-        services.AddDependencyInjection(Configuration);
         services.AddDependencyInjectionByConvention(typeof(Program).GetTypeInfo().Assembly);
 
         services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
@@ -65,6 +64,8 @@ public class Startup
         IMapper mapper = config.CreateMapper();
 
         services.AddSingleton(mapper);
+        
+        services.AddDependencyInjection(Configuration);
 
         services.AddCors(options =>
         {

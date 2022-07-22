@@ -11,19 +11,18 @@ namespace GClaims.Core;
 public abstract class AppControllerBase : Controller
 {
     private readonly DomainNotificationHandler _notifications;
+    private readonly IMediatorHandler _mediatorHandler;
 
     protected AppControllerBase(INotificationHandler<DomainNotification> notifications,
         IMediatorHandler mediatorHandler)
     {
         _notifications = (DomainNotificationHandler)notifications;
-        MediatorHandler = mediatorHandler;
+        _mediatorHandler = mediatorHandler;
     }
-
-    protected IMediatorHandler MediatorHandler { get; }
-
+    
     protected bool OperationIsValid => !_notifications.HasNotification();
 
-    protected bool IsValidOperation(ModelStateDictionary modelState)
+    protected bool ValidateOperation(ModelStateDictionary modelState)
     {
         return !_notifications.HasNotification(modelState);
     }
@@ -40,7 +39,7 @@ public abstract class AppControllerBase : Controller
 
     protected void SendError(string code, string message)
     {
-        MediatorHandler.PublishNotification(new DomainNotification(code, message));
+        _mediatorHandler.PublishNotification(new DomainNotification(code, message));
     }
 
     protected UnprocessableEntityObjectResult Errors()

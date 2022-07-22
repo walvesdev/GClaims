@@ -45,10 +45,6 @@ public static class DependecyInjectionExtension
 
         // Mediator
         services.AddScoped<IMediatorHandler, MediatorHandler>();
-        // services.AddScoped(typeof(ICommandHandler<>), typeof(CommandHandler<>));
-        // services.AddScoped(typeof(ICommandHandler<,>), typeof(CommandHandler<,>));
-        // services.AddScoped(typeof(IQueryHandler<>), typeof(QueryHandler<>));
-        // services.AddScoped(typeof(IQueryHandler<,>), typeof(QueryHandler<,>));
 
         // Notifications
         services.AddScoped<INotificationHandler<DomainNotification>, DomainNotificationHandler>();

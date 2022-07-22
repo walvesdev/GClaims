@@ -2,6 +2,7 @@ using GClaims.BuildingBlocks.Core;
 using GClaims.BuildingBlocks.Core.Mediator;
 using GClaims.BuildingBlocks.Core.Messages;
 using GClaims.BuildingBlocks.Core.Messages.CommonMessages.IntegrationEvents;
+using GClaims.BuildingBlocks.Core.Messages.CommonMessages.Notifications;
 using GClaims.Core;
 using GClaims.Core.Extensions;
 using GClaims.Marvel.Application.Accounts.Comands;
@@ -52,6 +53,15 @@ public class AccountCommandHandler :
             {
                 AggregateId = command.Request.Input!.Name,
                 Data = JsonConvert.SerializeObject(account)
+            });
+            
+            
+            await MediatorHandler.PublishNotification(new DomainNotification("DomainNotification Teste", "Erro DomainNotification")
+            {
+                Data = new
+                {
+                    ErroTeste = 2005
+                }
             });
             
             return  await Repository.Save(account!);
