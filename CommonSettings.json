@@ -4,6 +4,14 @@
     "Default": "Data Source=tcp:localhost,1433;Initial Catalog=Marvel;User Id=sa;Password=1q2w3E*;MultipleActiveResultSets=True;Connect Timeout=300;",
     "EventStoreConnection": "ConnectTo=tcp://admin:changeit@localhost:1113; HeartBeatTimeout=500000;UseSslConnection=False;"
   },
+  "HealthChecks-UI": {
+    "HealthChecks": [
+      {
+        "Name": "Infrastructure",
+        "Uri": "/healthchecks-data-ui"
+      }
+    ]
+  },
   "AppSettings": {
     "EventStore": {
       "Enabled": true

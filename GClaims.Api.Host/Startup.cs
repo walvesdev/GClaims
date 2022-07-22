@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -7,14 +8,15 @@ using GClaims.Core.Auth;
 using GClaims.Core.Extensions;
 using GClaims.Core.FIlters;
 using GClaims.Core.Filters.CustomExceptions;
-using GClaims.Core.Handlers;
 using GClaims.Core.Middlewares;
 using GClaims.Marvel.Application.Accounts.Dtos;
 using GClaims.Marvel.Core.Models;
-using Microsoft.AspNetCore.Authentication;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
@@ -46,7 +48,6 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        
         var appSettings = Configuration.GetSection("AppSettings").Get<AppSettingsSection>();
 
         // Add services to the container.
@@ -55,16 +56,16 @@ public class Startup
         services.AddDependencyInjectionByConvention(typeof(Program).GetTypeInfo().Assembly);
 
         services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
-        
+
         var config = new MapperConfiguration(cfg =>
         {
             cfg.CreateMap<MarvelAccount, MarvelAccountDto>();
             cfg.CreateMap<MarvelAccountDto, MarvelAccount>();
         });
-        IMapper mapper = config.CreateMapper();
+        var mapper = config.CreateMapper();
 
         services.AddSingleton(mapper);
-        
+
         services.AddDependencyInjection(Configuration);
 
         services.AddCors(options =>
@@ -86,7 +87,7 @@ public class Startup
 
         services.AddSwaggerGen(swagger =>
         {
-            swagger.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
+            swagger.EnableAnnotations(true, true);
             swagger.SwaggerDoc("v1", new OpenApiInfo
             {
                 Title = "GClaims API",
@@ -108,7 +109,7 @@ public class Startup
             {
                 swagger.IncludeXmlComments(file, true);
             });
-            
+
             swagger.AddSecurityDefinition("basic", new OpenApiSecurityScheme
             {
                 Name = "Authorization",
@@ -117,7 +118,7 @@ public class Startup
                 In = ParameterLocation.Header,
                 Description = "Basic Authorization header using the Bearer scheme."
             });
-            
+
             swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
                 {
@@ -129,11 +130,10 @@ public class Startup
                             Id = "basic"
                         }
                     },
-                    new string[] {}
+                    new string[] { }
                 }
             });
         });
-
 
         JsonConvert.DefaultSettings = () =>
         {
@@ -147,6 +147,15 @@ public class Startup
             settings.Converters.Add(new StringEnumConverter());
             return settings;
         };
+        
+        services.AddHealthChecks();
+        
+        services.AddHealthChecks()
+            .AddSqlServer(Configuration.GetConnectionString("Default"),
+                name: "sqlserver", tags: new string[] { "db", "data" });
+        
+        services.AddHealthChecksUI()
+            .AddInMemoryStorage();
 
         services.AddRazorPages();
         services.AddControllers(opt =>
@@ -157,10 +166,7 @@ public class Startup
                 opt.RespectBrowserAcceptHeader = true;
             })
             .ConfigureApiBehaviorOptions(o => { o.SuppressModelStateInvalidFilter = true; })
-            .AddJsonOptions(opts =>
-            {
-                opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-            })
+            .AddJsonOptions(opts => { opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); })
             .AddNewtonsoftJson(opts =>
             {
                 var settings = JsonConvert.DefaultSettings();
@@ -177,7 +183,7 @@ public class Startup
 
                 opts.SerializerSettings.Formatting = Formatting.Indented;
             });
-        
+
         services.AddJwtConfigWebApi(Configuration);
 
         services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
@@ -191,14 +197,13 @@ public class Startup
     public void Configure(IApplicationBuilder app, IHostApplicationLifetime lifetime, ILogger logger)
     {
         Logger = logger;
-        
+
         app.Use((context, next) =>
         {
             context.Request.EnableBuffering();
             return next();
         });
 
-       
         app.UseForwardedHeaders();
 
         app.Use((context, next) =>
@@ -229,7 +234,7 @@ public class Startup
                 await context.Response.WriteAsync(response, Encoding.UTF8);
             }, true);
         });
-        
+
         app.UseSwagger();
         app.UseSwaggerUI(ui =>
         {
@@ -237,18 +242,51 @@ public class Startup
             ui.DocExpansion(DocExpansion.None);
         });
         
+        app.UseHealthChecks("/status",
+            new HealthCheckOptions()
+            {
+                ResponseWriter = async (context, report) =>
+                {
+                    var result = JsonConvert.SerializeObject(
+                        new
+                        {
+                            currentTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                            statusApplication = report.Status.ToString(),
+                            healthChecks = report.Entries.Select(e => new
+                            {
+                                check = e.Key,
+                                status = Enum.GetName(typeof(HealthStatus), e.Value.Status)
+                            })
+                        });
+
+                    context.Response.ContentType = MediaTypeNames.Application.Json;
+                    await context.Response.WriteAsync(result);
+                }
+            });
+
+        // Generated the endpoint which will return the needed data
+        app.UseHealthChecks("/healthchecks-data-ui", new HealthCheckOptions()
+        {
+            Predicate = _ => true,
+            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+        });
+
+        // Activate the dashboard for UI
+        app.UseHealthChecksUI(options =>
+        {
+            options.UIPath = "/monitor";
+        });
+
+
         app.UseRouting();
         app.UseStaticFiles();
-        
+
         app.UseAuthentication();
         app.UseAuthorization();
 
         app.UseCors(CORS_NAME);
         app.UseHttpsRedirection();
-        
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
+
+        app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
     }
 }

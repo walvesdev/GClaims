@@ -38,8 +38,16 @@
 
  
     <ItemGroup>
+        <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="6.0.2" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI" Version="6.0.4" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="6.0.4" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI.Core" Version="6.0.4" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="6.0.4" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI.SqlServer.Storage" Version="6.0.4" />
         <PackageReference Include="AutoMapper" Version="11.0.1" />
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+        <PackageReference Include="HealthCheck.Module.DynamicCodeExecution" Version="3.2.133" />
+        <PackageReference Include="HealthCheck.WebUI" Version="3.2.133" />
         <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.7" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
